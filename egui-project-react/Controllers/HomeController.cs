@@ -21,6 +21,7 @@ namespace egui_project_react.Controllers
 
         public JsonResult Create([FromBody] Book book)
         {
+         
             return Json(book);
         }
 

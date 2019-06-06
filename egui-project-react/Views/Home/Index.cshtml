@@ -45,6 +45,14 @@ class Book extends React.Component{
 class App extends React.Component{
   constructor(props){
       super(props);
+      this.addBookOnClick = this.addBookOnClick.bind(this);
+      this.editBookOnClick = this.editBookOnClick.bind(this);
+      this.deleteBookOnClick = this.deleteBookOnClick.bind(this);
+      this.onChangeAuthor = this.onChangeAuthor.bind(this);
+      this.onChangeTitle = this.onChangeTitle.bind(this);
+      this.onChangeYear = this.onChangeYear.bind(this);
+
+      //this.onChange = this.onChange.bind(this);
       this.state = {
       books: [],
       filters: {
@@ -52,9 +60,9 @@ class App extends React.Component{
         author: "",
         year: ""
       },
-      title2: "test1",
-      author2: "test2",
-      year2: "test3"
+      title: '',
+      author: '',
+      year: ''
     };    
   }
  componentDidMount() {
@@ -90,15 +98,21 @@ class App extends React.Component{
                     <div class="input-group-prepend">
                       <span class="input-group-text" id="inputGroup-sizing-default">Author</span>
                     </div>
-                    <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"/>
+                    <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                    defaultValue={this.state.author} onInput={this.onChangeAuthor}
+                    />
                     <div class="input-group-prepend">
                       <span class="input-group-text" id="inputGroup-sizing-default">Title</span>
                     </div>
-                    <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"/>
+                    <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                    defaultValue={this.state.title}  onInput={this.onChangeTitle}
+                    />
                     <div class="input-group-prepend">
                       <span class="input-group-text" id="inputGroup-sizing-default">Year</span>
                     </div>
-                    <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"/>
+                    <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                    defaultValue={this.state.year}  onInput={this.onChangeYear}
+                    />
                   </div>
                 </div> 
                 <div className="modal-footer">
@@ -161,18 +175,30 @@ class App extends React.Component{
     )
   }
 
-  addBookOnClick () {
+  onChangeAuthor(event){
+     this.setState({author: event.target.value});
+}
+  onChangeTitle(event){
+    this.setState({title: event.target.value});
+}
+  onChangeYear(event){
+    this.setState({year: event.target.value});
+  }
+
+  addBookOnClick (event) {
     axios({
         method: 'post',
         url: '/Home/Create',
         data: {
-            "Author": "f",
-            "Title":"fe",
-            "Year": "efe",
+            "Author": this.state.author,
+            "Title":this.state.title,
+            "Year": this.state.year,
         }
     })
     .then(response => {
-        console.log("success added!")
+        this.setState({
+          books: [...this.state.books, response.data]
+        })
     })
     .catch(error => console.log('error'))
   }
