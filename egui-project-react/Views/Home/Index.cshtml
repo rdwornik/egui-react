@@ -23,21 +23,22 @@
   <script type="text/babel">
 
 class Book extends React.Component{
-  constructor(props){
+  constructor(props, onCheckedToggle){
     super(props)
   }
+
   render() {
     return(
       <tr>
         <th scope="row">
           <div className="form-check">
-            <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
+            <input className="form-check-input" type="checkbox" value={this.props.checked} id="defaultCheck1" onChange={this.props.onCheckedToggle} />
             <label className="form-check-label" for="defaultCheck1"/>
           </div>
         </th>
         <td>{this.props.author}</td>
         <td>{this.props.title}</td>
-        <td> {this.props.year}</td>
+        <td>{this.props.year}</td>
       </tr>
     );
   }
@@ -51,7 +52,7 @@ class App extends React.Component{
       this.onChangeAuthor = this.onChangeAuthor.bind(this);
       this.onChangeTitle = this.onChangeTitle.bind(this);
       this.onChangeYear = this.onChangeYear.bind(this);
-
+      this.onCheckBoxChange = this.onCheckBoxChange.bind(this);
       //this.handleChange = this.handleChange.bind(this);
       //this.onChange = this.onChange.bind(this);
       this.state = {
@@ -68,9 +69,19 @@ class App extends React.Component{
       checked: false,
     };    
   }
+ // this.props.book.filter(book => book.checked) zwróci array t
+
  componentDidMount() {
     axios.get('/Home/List')
-      .then(response => this.setState({ books: JSON.parse(JSON.stringify(response.data.books)) }))
+      .then(response => this.setState({ 
+        books: response.data.books.map(book => ({
+          author: book.author,
+          title: book.title,
+          year: book.year,
+          id: book.id,
+          checked: false
+        })),
+       }))
   }
  
   doClear() {
@@ -177,9 +188,7 @@ class App extends React.Component{
        </button>
     )
   }
-  handleChange(event){
-   
-  }
+ 
   onChangeAuthor(event){
      this.setState({author: event.target.value});
 }
@@ -190,12 +199,18 @@ class App extends React.Component{
     this.setState({year: event.target.value});
   }
 
+  onCheckBoxChange(event){
+    console.log("hej")
+    this.setState({checked: event.target.value})
+  }
+
   addBookOnClick (event) {
+    //const list = this.props.book.filter(book => book.checked);
     axios({
         method: 'post',
         url: '/Home/Create',
         data: {
-            "Author": this.state.author,
+          "Author": this.state.author,
             "Title":this.state.title,
             "Year": this.state.year,
         }
@@ -271,6 +286,7 @@ class App extends React.Component{
           </div>
     )
   }
+  
   bookListCard() {
     return (
       <div className="card m-3 p-3 tableStyle">
@@ -286,7 +302,9 @@ class App extends React.Component{
           <tbody>
             {this.state.books.map((book,index) => (
                 <Book 
+                  onCheckedToggle={this.onCheckBoxChange}
                   key={index}
+                  id={book.id}
                   author={book.author}
                   title={book.title}
                   year={book.year}
