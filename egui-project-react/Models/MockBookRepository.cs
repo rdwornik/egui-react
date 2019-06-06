@@ -23,7 +23,7 @@ namespace egui_project_react.Models
         {
             _books = new List<Book>();
             
-            using (var reader = new StreamReader("/home/robert/RiderProjects/egui-project-react/egui-project-react/data/dane1copy.csv"))
+            using (var reader = new StreamReader("/home/robert/RiderProjects/egui-project-react/egui-project-react/data/dane3.csv"))
             using (var csv = new CsvReader(reader))
             {
                 csv.Configuration.HasHeaderRecord = true;

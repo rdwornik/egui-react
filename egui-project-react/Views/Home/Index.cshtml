@@ -52,6 +52,7 @@ class App extends React.Component{
       this.onChangeTitle = this.onChangeTitle.bind(this);
       this.onChangeYear = this.onChangeYear.bind(this);
 
+      //this.handleChange = this.handleChange.bind(this);
       //this.onChange = this.onChange.bind(this);
       this.state = {
       books: [],
@@ -60,9 +61,11 @@ class App extends React.Component{
         author: "",
         year: ""
       },
+      id: '',
       title: '',
       author: '',
-      year: ''
+      year: '',
+      checked: false,
     };    
   }
  componentDidMount() {
@@ -174,7 +177,9 @@ class App extends React.Component{
        </button>
     )
   }
-
+  handleChange(event){
+   
+  }
   onChangeAuthor(event){
      this.setState({author: event.target.value});
 }
@@ -285,6 +290,7 @@ class App extends React.Component{
                   author={book.author}
                   title={book.title}
                   year={book.year}
+                  checkbox={this.state.checked}
                 />
             ))}
           </tbody>

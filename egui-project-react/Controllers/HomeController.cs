@@ -21,18 +21,31 @@ namespace egui_project_react.Controllers
 
         public JsonResult Create([FromBody] Book book)
         {
+            book.Id = 0;
+           foreach (var b in _bookRepository.GetAllBooks())
+           {
+               if (b.Id > book.Id)
+               {
+                   book.Id = b.Id;
+               }
+           }
+
+           book.Id++;
            _bookRepository.addBook(book);
             return Json(book);
         }
 
         public JsonResult Edit([FromBody] Book book)
         {
-            
             return Json(book);
         }
-        public JsonResult Delete([FromBody] Book book)
+        public JsonResult Delete([FromBody] List<int> _ids)
         {
-            return Json(book);
+            foreach (var id in _ids)
+            {
+                Console.WriteLine(_ids);
+            }
+            return Json(_ids);
         }
         
         
