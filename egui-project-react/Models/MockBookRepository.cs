@@ -45,7 +45,7 @@ namespace egui_project_react.Models
 
         public void addBook(Book book)
         {
-            throw new System.NotImplementedException();
+            _books.Insert(0,book);
         }
 
         public void deleteBook(Book book)
