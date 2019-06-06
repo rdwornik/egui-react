@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>My First React Example</title>
+    <title>Library App</title>
   </head>
   <body>
         <div id="container"></div>
@@ -32,9 +32,7 @@ class Book extends React.Component{
         <th scope="row">
           <div className="form-check">
             <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-            <label className="form-check-label" for="defaultCheck1">
-              Default checkbox
-            </label>
+            <label className="form-check-label" for="defaultCheck1"/>
           </div>
         </th>
         <td>{this.props.author}</td>
@@ -44,7 +42,6 @@ class Book extends React.Component{
     );
   }
 }
-
 class App extends React.Component{
   constructor(props){
       super(props);
@@ -54,15 +51,17 @@ class App extends React.Component{
         title: "",
         author: "",
         year: ""
-      }
+      },
+      title2: "test1",
+      author2: "test2",
+      year2: "test3"
     };    
   }
-
  componentDidMount() {
     axios.get('/Home/List')
       .then(response => this.setState({ books: JSON.parse(JSON.stringify(response.data.books)) }))
   }
-  
+ 
   doClear() {
     this.setState({filters: {
       title: "",
@@ -70,7 +69,6 @@ class App extends React.Component{
       year: ""
     }})
   }
-
   addBookModal(){
     return(
       //button trigerr model than modal
@@ -168,22 +166,46 @@ class App extends React.Component{
         method: 'post',
         url: '/Home/Create',
         data: {
-            "Author": 'author',
-            "Title": 'title',
-            "Year": '124',
+            "Author": "f",
+            "Title":"fe",
+            "Year": "efe",
         }
     })
     .then(response => {
-        console.log("success!")
+        console.log("success added!")
     })
     .catch(error => console.log('error'))
   }
 
   editBookOnClick(){
-    console.log("edit clicked");
+    axios({
+        method: 'post',
+        url: '/Home/Edit',
+        data: {
+            "Author": 'autho to edit',
+            "Title": 'title to edit',
+            "Year": '124 to edit',
+        }
+    })
+    .then(response => {
+        console.log("success edited!")
+    })
+    .catch(error => console.log('error'))
   }
   deleteBookOnClick(){
-   console.log("delete clicked");
+    axios({
+        method: 'post',
+        url: '/Home/Delete',
+        data: {
+            "Author": 'autho to delete',
+            "Title": 'title to delete',
+            "Year": '124 to delete',
+        }
+    })
+    .then(response => {
+        console.log("success deleted!")
+    })
+    .catch(error => console.log('error'))
   }
   filterCard(){
     return(
@@ -272,7 +294,7 @@ class App extends React.Component{
 }
 
 ReactDOM.render(
-  <App title="The github cards app"/>,
+  <App title="Library"/>,
   container,
 );
 

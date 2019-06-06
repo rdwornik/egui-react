@@ -23,6 +23,16 @@ namespace egui_project_react.Controllers
         {
             return Json(book);
         }
+
+        public JsonResult Edit([FromBody] Book book)
+        {
+            return Json(book);
+        }
+        public JsonResult Delete([FromBody] Book book)
+        {
+            return Json(book);
+        }
+        
         
         public IActionResult Index()
         {
@@ -31,9 +41,7 @@ namespace egui_project_react.Controllers
             {
                 Books = books.ToList()
             };
-            
-            var json = JsonConvert.SerializeObject(books);
-           
+            var json = JsonConvert.SerializeObject(books); 
             return View(homeViewModel);
         }
 

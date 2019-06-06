@@ -64,6 +64,12 @@ namespace egui_project_react
                 routes.MapRoute(
                     name: "Create",
                     template: "{controller=Home}/{action=Create}");
+                routes.MapRoute(
+                    name: "Edit",
+                    template: "{controller=Home}/{action=Edit}");
+                routes.MapRoute(
+                    name: "Delete",
+                    template: "{controller=Home}/{action=Delete}");
             });
         }
     }
