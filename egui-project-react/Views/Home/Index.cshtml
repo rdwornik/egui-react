@@ -23,8 +23,13 @@
   <script type="text/babel">
 
 class Book extends React.Component{
-  constructor(props, onCheckedToggle){
-    super(props)
+  constructor(props){
+    super(props);
+    this.onCheckedToggle = this.onCheckedToggle.bind(this);
+  }
+
+  passId(){
+    this.onCheckedToggle(this.props.id);
   }
 
   render() {
@@ -32,7 +37,7 @@ class Book extends React.Component{
       <tr>
         <th scope="row">
           <div className="form-check">
-            <input className="form-check-input" type="checkbox" value={this.props.checked} id="defaultCheck1" onChange={this.props.onCheckedToggle} />
+            <input className="form-check-input" type="checkbox" value={this.props.checked} id="defaultCheck1" onChange={this.passId} />
             <label className="form-check-label" for="defaultCheck1"/>
           </div>
         </th>
@@ -199,8 +204,8 @@ class App extends React.Component{
     this.setState({year: event.target.value});
   }
 
-  onCheckBoxChange(event){
-    console.log("hej")
+  onCheckBoxChange(id){
+    console.log(id)
     this.setState({checked: event.target.value})
   }
 
@@ -249,7 +254,7 @@ class App extends React.Component{
         }
     })
     .then(response => {
-        console.log("success deleted!")
+        console.log("success sdeleted!")
     })
     .catch(error => console.log('error'))
   }
@@ -286,6 +291,8 @@ class App extends React.Component{
           </div>
     )
   }
+
+ 
   
   bookListCard() {
     return (
