@@ -35,29 +35,21 @@ namespace egui_project_react.Controllers
             return Json(book);
         }
 
-        public JsonResult Edit([FromBody] Book book)
+        public IActionResult Edit([FromBody] Book book)
         {
-            return Json(book);
+            if (_bookRepository.updateBook(book))
+            {
+                return Json(_bookRepository.GetAllBooks());
+            }
+            else
+            {
+                return Error();
+            }
         }
         public JsonResult Delete([FromBody] List<int> _ids)
         {
-            Console.WriteLine("IDS TO DELETE");
-            foreach (var VARIABLE in _ids)
-            {
-                Console.WriteLine(VARIABLE);
-            }
-
-            Console.WriteLine("ITEMS IN LIST");
-            foreach (var VARIABLE in _bookRepository.GetAllBooks())
-            {
-                Console.WriteLine(VARIABLE.Author + " " + VARIABLE.Id);
-            }
+          
             _bookRepository.deleteBook(_ids);
-            Console.WriteLine("DELETED");
-            foreach (var VARIABLE in _bookRepository.GetAllBooks())
-            {
-                Console.WriteLine(VARIABLE.Author + " " +VARIABLE.Id);
-            }
             return Json(_bookRepository.GetAllBooks());
         }
         
@@ -65,7 +57,6 @@ namespace egui_project_react.Controllers
         public IActionResult Index()
         {
             var books = _bookRepository.GetAllBooks().OrderBy(p => p.Title);
-            Console.WriteLine("I AM INDEX");
 
             var homeViewModel = new HomeViewModel()
             {
@@ -74,6 +65,8 @@ namespace egui_project_react.Controllers
             var json = JsonConvert.SerializeObject(books); 
             return View(homeViewModel);
         }
+        
+        
 
         public JsonResult List()
         {

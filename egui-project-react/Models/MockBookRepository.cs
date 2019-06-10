@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace egui_project_react.Models
 {
@@ -52,16 +56,23 @@ namespace egui_project_react.Models
         public void deleteBook(List<int> _ids)
         {
             _books.RemoveAll(t => _ids.Contains(t.Id));
-            Console.WriteLine("oooooooooooooooo");
-            foreach (var VARIABLE in _books)
-            {
-                Console.WriteLine(VARIABLE.Author);
-            }
         }
 
-        public void updateBook(Book book)
+      
+
+
+        public bool updateBook(Book book)
         {
-            throw new System.NotImplementedException();
+            var elem = _books.FirstOrDefault(b => b.Id == book.Id);
+            if (elem == null)
+            {
+                return false;
+            }
+
+            elem.Title = book.Title;
+            elem.Year = book.Year;
+            elem.Author = book.Author;
+            return true;
         }
     }
 }

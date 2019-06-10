@@ -11,6 +11,6 @@ namespace egui_project_react.Models
 
         void addBook(Book book);
         void deleteBook(List<int> _ids);
-        void updateBook(Book book);
+        bool updateBook(Book book);
     }
 }

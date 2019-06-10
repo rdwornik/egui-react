@@ -36,6 +36,8 @@ class App extends React.Component {
     this.deleteBookOnClick = this.deleteBookOnClick.bind(this);
     this.onCheckBoxChange = this.onCheckBoxChange.bind(this);
     this.onChangeHandle = this.onChangeHandle.bind(this);
+    this.doClear = this.doClear.bind(this);
+    this.doClearFilter = this.doClearFilter.bind(this);
 
     this.state = {
       books: [],
@@ -48,13 +50,15 @@ class App extends React.Component {
       title: "",
       author: "",
       year: "",
-      checked: false
+      checked: false,
+      titleSelected: "",
+      authorSelected: "",
+      yearSelected: ""
     };
   }
   // this.props.book.filter(book => book.checked) zwróci array t
 
   componentDidMount() {
-    console.log("I just mounted");
     axios.get("/Home/List").then(response =>
       this.setState({
         books: response.data.books.map(book => ({
@@ -70,6 +74,14 @@ class App extends React.Component {
 
   doClear() {
     this.setState({
+      title: "",
+      author: "",
+      year: ""
+    });
+  }
+
+  doClearFilter() {
+    this.setState({
       filters: {
         title: "",
         author: "",
@@ -79,6 +91,15 @@ class App extends React.Component {
   }
 
   onChangeHandle(event) {
+    const { name, value, type, checked } = event.target;
+    type === "checkbox"
+      ? this.setState({ [name]: checked })
+      : this.setState({
+          [name]: value
+        });
+  }
+
+  onChangeEditHandle(event) {
     const { name, value, type, checked } = event.target;
     type === "checkbox"
       ? this.setState({ [name]: checked })
@@ -173,8 +194,6 @@ class App extends React.Component {
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
                     value={this.state.year}
-                    placeholder="year"
-                    //onChange={this.onChangeHandle}
                     onInput={this.onChangeHandle}
                   />
                 </div>
@@ -184,6 +203,7 @@ class App extends React.Component {
                   type="button"
                   className="btn btn-secondary"
                   data-dismiss="modal"
+                  onClick={this.doClear}
                 >
                   Close
                 </button>
@@ -202,6 +222,7 @@ class App extends React.Component {
       </div>
     );
   }
+
   editBookModal() {
     return (
       <div>
@@ -209,7 +230,19 @@ class App extends React.Component {
           type="button"
           className="btn btn-primary m-3"
           data-toggle="modal"
-          data-target="#exampleModalEdit"
+          data-target={
+            this.state.books.filter(item => item.checked).length !== 1
+              ? null
+              : "#exampleModalEdit"
+          }
+          onClick={() => {
+            const val = this.state.books.filter(item => item.checked);
+            if (val.length > 1) {
+              alert("Can't edit more than one item");
+            } else if (val.length < 1) {
+              alert("select one item to edit");
+            }
+          }}
         >
           Edit Book
         </button>
@@ -225,7 +258,7 @@ class App extends React.Component {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel">
-                  Edit book
+                  Edit Book
                 </h5>
                 <button
                   type="button"
@@ -248,9 +281,15 @@ class App extends React.Component {
                   </div>
                   <input
                     type="text"
+                    name="authorSelected"
                     className="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
+                    placeholder={this.state.books
+                      .filter(item => item.checked)
+                      .map(item => item.author)}
+                    value={this.state.authorSelected}
+                    onInput={this.onChangeHandle}
                   />
                   <div className="input-group-prepend">
                     <span
@@ -262,9 +301,15 @@ class App extends React.Component {
                   </div>
                   <input
                     type="text"
+                    name="titleSelected"
                     className="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
+                    placeholder={this.state.books
+                      .filter(item => item.checked)
+                      .map(item => item.title)}
+                    value={this.state.titleSelected}
+                    onInput={this.onChangeHandle}
                   />
                   <div className="input-group-prepend">
                     <span
@@ -275,10 +320,13 @@ class App extends React.Component {
                     </span>
                   </div>
                   <input
-                    type="text"
+                    type="number"
+                    name="yearSelected"
                     className="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
+                    value={this.state.yearSelected}
+                    onInput={this.onChangeHandle}
                   />
                 </div>
               </div>
@@ -287,6 +335,7 @@ class App extends React.Component {
                   type="button"
                   className="btn btn-secondary"
                   data-dismiss="modal"
+                  onClick={this.doClear}
                 >
                   Close
                 </button>
@@ -319,7 +368,6 @@ class App extends React.Component {
   }
 
   onCheckBoxChange(id) {
-    console.log("hej" + id);
     this.setState(prevState => {
       const updateState = prevState.books.map(item => {
         if (item.id === id) {
@@ -327,8 +375,17 @@ class App extends React.Component {
         }
         return item;
       });
+
+      const checkedBook =
+        prevState.books.filter(item => item.checked).length > 0
+          ? prevState.books.filter(item => item.checked)
+          : [{ author: "", title: "", year: "" }];
+
       return {
-        books: updateState
+        books: updateState,
+        authorSelected: checkedBook[0].author,
+        titleSelected: checkedBook[0].title,
+        yearSelected: checkedBook[0].year
       };
     });
   }
@@ -348,47 +405,31 @@ class App extends React.Component {
           ...response.data,
           checked: false
         };
-        console.log(book);
         this.setState({
           books: [...this.state.books, book]
         });
       })
       .catch(error => console.log("error"));
 
-    this.setState({
-      year: "",
-      author: "",
-      title: ""
-    });
+    this.doClear();
   }
 
   editBookOnClick() {
+    const editBook = this.state.books.filter(item => item.checked);
+    console.log("int parsed " + editBook[0].id);
     axios({
       method: "post",
       url: "/Home/Edit",
       data: {
-        Author: "autho to edit",
-        Title: "title to edit",
-        Year: "124 to edit"
+        Id: editBook[0].id,
+        Author: this.state.authorSelected,
+        Title: this.state.titleSelected,
+        Year: this.state.yearSelected
       }
     })
       .then(response => {
-        console.log("success edited!");
-      })
-      .catch(error => console.log("error"));
-  }
-  deleteBookOnClick() {
-    const toDelete = this.state.books
-      .filter(item => item.checked)
-      .map(item => item.id);
-
-    console.log(toDelete);
-    axios({
-      method: "post",
-      url: "/Home/Delete",
-      data: toDelete
-    })
-      .then(response => {
+        console.log("data respnse");
+        console.log(response.data);
         const newBooks = response.data.map(item => {
           return {
             ...item,
@@ -402,6 +443,31 @@ class App extends React.Component {
         });
       })
       .catch(error => console.log("error"));
+    this.doClear();
+  }
+  deleteBookOnClick() {
+    const toDelete = this.state.books
+      .filter(item => item.checked)
+      .map(item => item.id);
+
+    axios({
+      method: "post",
+      url: "/Home/Delete",
+      data: toDelete
+    })
+      .then(response => {
+        const newBooks = response.data.map(item => {
+          return {
+            ...item,
+            checked: false
+          };
+        });
+        this.setState({
+          books: newBooks
+        });
+      })
+      .catch(error => console.log("error"));
+    this.doClear();
   }
 
   filterCard() {
