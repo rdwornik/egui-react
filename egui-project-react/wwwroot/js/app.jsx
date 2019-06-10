@@ -13,7 +13,9 @@ class Book extends React.Component {
               type="checkbox"
               value={this.props.checked}
               id="defaultCheck1"
-              onChange={this.props.onCheckedToggle}
+              onChange={() => {
+                this.props.onCheckedToggle(this.props.id);
+              }}
             />
             <label className="form-check-label" htmlFor="defaultCheck1" />
           </div>
@@ -31,12 +33,9 @@ class App extends React.Component {
     this.addBookOnClick = this.addBookOnClick.bind(this);
     this.editBookOnClick = this.editBookOnClick.bind(this);
     this.deleteBookOnClick = this.deleteBookOnClick.bind(this);
-    this.onChangeAuthor = this.onChangeAuthor.bind(this);
-    this.onChangeTitle = this.onChangeTitle.bind(this);
-    this.onChangeYear = this.onChangeYear.bind(this);
     this.onCheckBoxChange = this.onCheckBoxChange.bind(this);
-    //this.handleChange = this.handleChange.bind(this);
-    //this.onChange = this.onChange.bind(this);
+    this.onChangeHandle = this.onChangeHandle.bind(this);
+
     this.state = {
       books: [],
       filters: {
@@ -54,6 +53,7 @@ class App extends React.Component {
   // this.props.book.filter(book => book.checked) zwróci array t
 
   componentDidMount() {
+    console.log("I just mounted");
     axios.get("/Home/List").then(response =>
       this.setState({
         books: response.data.books.map(book => ({
@@ -76,6 +76,16 @@ class App extends React.Component {
       }
     });
   }
+
+  onChangeHandle(event) {
+    const { name, value, type, checked } = event.target;
+    type === "checkbox"
+      ? this.setState({ [name]: checked })
+      : this.setState({
+          [name]: value
+        });
+  }
+
   addBookModal() {
     return (
       //button trigerr model than modal
@@ -123,11 +133,12 @@ class App extends React.Component {
                   </div>
                   <input
                     type="text"
+                    name="author"
                     className="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
                     defaultValue={this.state.author}
-                    onInput={this.onChangeAuthor}
+                    onInput={this.onChangeHandle}
                   />
                   <div className="input-group-prepend">
                     <span
@@ -139,11 +150,12 @@ class App extends React.Component {
                   </div>
                   <input
                     type="text"
+                    name="title"
                     className="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
                     defaultValue={this.state.title}
-                    onInput={this.onChangeTitle}
+                    onInput={this.onChangeHandle}
                   />
                   <div className="input-group-prepend">
                     <span
@@ -155,11 +167,12 @@ class App extends React.Component {
                   </div>
                   <input
                     type="text"
+                    name="year"
                     className="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
                     defaultValue={this.state.year}
-                    onInput={this.onChangeYear}
+                    onInput={this.onChangeHandle}
                   />
                 </div>
               </div>
@@ -302,23 +315,22 @@ class App extends React.Component {
     );
   }
 
-  onChangeAuthor(event) {
-    this.setState({ author: event.target.value });
-  }
-  onChangeTitle(event) {
-    this.setState({ title: event.target.value });
-  }
-  onChangeYear(event) {
-    this.setState({ year: event.target.value });
-  }
-
-  onCheckBoxChange(event) {
-    console.log("hej");
-    this.setState({ checked: event.target.value });
+  onCheckBoxChange(id) {
+    console.log("hej" + id);
+    this.setState(prevState => {
+      const updateState = prevState.books.map(item => {
+        if (item.id === id) {
+          item.checked = !item.checked;
+        }
+        return item;
+      });
+      return {
+        books: updateState
+      };
+    });
   }
 
   addBookOnClick(event) {
-    //const list = this.props.book.filter(book => book.checked);
     axios({
       method: "post",
       url: "/Home/Create",
@@ -329,8 +341,13 @@ class App extends React.Component {
       }
     })
       .then(response => {
+        const book = {
+          ...response.data,
+          checked: false
+        };
+        console.log(book);
         this.setState({
-          books: [...this.state.books, response.data]
+          books: [...this.state.books, book]
         });
       })
       .catch(error => console.log("error"));
@@ -352,20 +369,31 @@ class App extends React.Component {
       .catch(error => console.log("error"));
   }
   deleteBookOnClick() {
+    const toDelete = this.state.books
+      .filter(item => item.checked)
+      .map(item => item.id);
+
+    console.log(toDelete);
     axios({
       method: "post",
       url: "/Home/Delete",
-      data: {
-        Author: "autho to delete",
-        Title: "title to delete",
-        Year: "124 to delete"
-      }
+      data: toDelete
     })
       .then(response => {
-        console.log("success deleted!");
+        const newBooks = response.data.map(item => {
+          if (item.checked === true) {
+            item.checked = !item.checked;
+          }
+          return item;
+        });
+        console.log(newBooks);
+        this.setState({
+          books: newBooks
+        });
       })
       .catch(error => console.log("error"));
   }
+
   filterCard() {
     return (
       <div className="card m-3 p-3">
@@ -379,6 +407,8 @@ class App extends React.Component {
                 className="form-control"
                 id="formGroupExampleInput"
                 placeholder="Example input"
+                name=" filters.author"
+                onChange={this.onChangeHandle}
               />
             </div>
           </div>
@@ -390,6 +420,8 @@ class App extends React.Component {
                 className="form-control"
                 id="formGroupExampleInput2"
                 placeholder="Another input"
+                name=" filters.title"
+                onChange={this.onChangeHandle}
               />
             </div>
           </div>
@@ -401,6 +433,8 @@ class App extends React.Component {
                 className="form-control"
                 id="formGroupExampleInput2"
                 placeholder="Another input"
+                name=" filters.year"
+                onChange={this.onChangeHandle}
               />
             </div>
           </div>
@@ -440,7 +474,7 @@ class App extends React.Component {
                 author={book.author}
                 title={book.title}
                 year={book.year}
-                checkbox={this.state.checked}
+                checkbox={false}
               />
             ))}
           </tbody>
@@ -467,4 +501,4 @@ class App extends React.Component {
     );
   }
 }
-React.render(<App title="Library" />, document.getElementById("container"));
+ReactDOM.render(<App title="Library" />, document.getElementById("container"));

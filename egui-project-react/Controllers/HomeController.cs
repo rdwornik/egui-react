@@ -41,11 +41,14 @@ namespace egui_project_react.Controllers
         }
         public JsonResult Delete([FromBody] List<int> _ids)
         {
-            foreach (var id in _ids)
+            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxx");
+            _bookRepository.deleteBook(_ids);
+
+            foreach (var VARIABLE in _bookRepository.GetAllBooks())
             {
-                Console.WriteLine(_ids);
+                Console.WriteLine(VARIABLE.Author);
             }
-            return Json(_ids);
+            return Json(_bookRepository.GetAllBooks());
         }
         
         

@@ -10,7 +10,7 @@ namespace egui_project_react.Models
         Book GetBook(string name);
 
         void addBook(Book book);
-        void deleteBook(Book book);
+        void deleteBook(List<int> _ids);
         void updateBook(Book book);
     }
 }

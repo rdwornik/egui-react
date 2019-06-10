@@ -48,9 +48,14 @@ namespace egui_project_react.Models
             _books.Insert(0,book);
         }
 
-        public void deleteBook(Book book)
+        public void deleteBook(List<int> _ids)
         {
-            throw new System.NotImplementedException();
+            _books.RemoveAll(t => _ids.Contains(t.Id));
+            Console.WriteLine("oooooooooooooooo");
+            foreach (var VARIABLE in _books)
+            {
+                Console.WriteLine(VARIABLE.Author);
+            }
         }
 
         public void updateBook(Book book)
