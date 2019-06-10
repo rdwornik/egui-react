@@ -28,6 +28,7 @@ class Book extends React.Component {
     );
   }
 }
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -445,6 +446,7 @@ class App extends React.Component {
       .catch(error => console.log("error"));
     this.doClear();
   }
+
   deleteBookOnClick() {
     const toDelete = this.state.books
       .filter(item => item.checked)
@@ -519,7 +521,7 @@ class App extends React.Component {
             <button
               className="form-control"
               id="buttonClear"
-              onClick={this.doClear}
+              onClick={this.doClearFilter}
             >
               Clear
             </button>
@@ -528,6 +530,8 @@ class App extends React.Component {
       </div>
     );
   }
+
+  onChangeFilter() {}
 
   bookListCard() {
     return (
@@ -542,17 +546,25 @@ class App extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.books.map((book, index) => (
-              <Book
-                onCheckedToggle={this.onCheckBoxChange}
-                key={index}
-                id={book.id}
-                author={book.author}
-                title={book.title}
-                year={book.year}
-                checked={book.checked}
-              />
-            ))}
+            {this.state.books
+              .filter(book => {
+                return (
+                  book.author.includes(this.state.filters.author) &&
+                  book.author.includes(this.state.filters.title) &&
+                  book.author.includes(this.state.filters.year)
+                );
+              })
+              .map((book, index) => (
+                <Book
+                  onCheckedToggle={this.onCheckBoxChange}
+                  key={index}
+                  id={book.id}
+                  author={book.author}
+                  title={book.title}
+                  year={book.year}
+                  checked={book.checked}
+                />
+              ))}
           </tbody>
         </table>
       </div>
