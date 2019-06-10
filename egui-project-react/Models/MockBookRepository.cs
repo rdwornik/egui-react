@@ -21,6 +21,7 @@ namespace egui_project_react.Models
 
         private void InitializeBooks()
         {
+            Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             _books = new List<Book>();
             
             using (var reader = new StreamReader("/home/robert/RiderProjects/egui-project-react/egui-project-react/data/dane3.csv"))

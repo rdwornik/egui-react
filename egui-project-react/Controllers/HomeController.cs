@@ -41,12 +41,22 @@ namespace egui_project_react.Controllers
         }
         public JsonResult Delete([FromBody] List<int> _ids)
         {
-            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxx");
-            _bookRepository.deleteBook(_ids);
+            Console.WriteLine("IDS TO DELETE");
+            foreach (var VARIABLE in _ids)
+            {
+                Console.WriteLine(VARIABLE);
+            }
 
+            Console.WriteLine("ITEMS IN LIST");
             foreach (var VARIABLE in _bookRepository.GetAllBooks())
             {
-                Console.WriteLine(VARIABLE.Author);
+                Console.WriteLine(VARIABLE.Author + " " + VARIABLE.Id);
+            }
+            _bookRepository.deleteBook(_ids);
+            Console.WriteLine("DELETED");
+            foreach (var VARIABLE in _bookRepository.GetAllBooks())
+            {
+                Console.WriteLine(VARIABLE.Author + " " +VARIABLE.Id);
             }
             return Json(_bookRepository.GetAllBooks());
         }
@@ -55,6 +65,8 @@ namespace egui_project_react.Controllers
         public IActionResult Index()
         {
             var books = _bookRepository.GetAllBooks().OrderBy(p => p.Title);
+            Console.WriteLine("I AM INDEX");
+
             var homeViewModel = new HomeViewModel()
             {
                 Books = books.ToList()

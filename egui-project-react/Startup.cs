@@ -25,7 +25,7 @@ namespace egui_project_react
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IBookRepository, MockBookRepository>();
+          services.AddSingleton<IBookRepository, MockBookRepository>();
                 
             services.Configure<CookiePolicyOptions>(options =>
             {

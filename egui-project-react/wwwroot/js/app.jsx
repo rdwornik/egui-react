@@ -11,7 +11,8 @@ class Book extends React.Component {
             <input
               className="form-check-input"
               type="checkbox"
-              value={this.props.checked}
+              value={true}
+              checked={this.props.checked}
               id="defaultCheck1"
               onChange={() => {
                 this.props.onCheckedToggle(this.props.id);
@@ -137,7 +138,7 @@ class App extends React.Component {
                     className="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
-                    defaultValue={this.state.author}
+                    value={this.state.author}
                     onInput={this.onChangeHandle}
                   />
                   <div className="input-group-prepend">
@@ -154,7 +155,7 @@ class App extends React.Component {
                     className="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
-                    defaultValue={this.state.title}
+                    value={this.state.title}
                     onInput={this.onChangeHandle}
                   />
                   <div className="input-group-prepend">
@@ -166,12 +167,14 @@ class App extends React.Component {
                     </span>
                   </div>
                   <input
-                    type="text"
+                    type="number"
                     name="year"
                     className="form-control"
                     aria-label="Default"
                     aria-describedby="inputGroup-sizing-default"
-                    defaultValue={this.state.year}
+                    value={this.state.year}
+                    placeholder="year"
+                    //onChange={this.onChangeHandle}
                     onInput={this.onChangeHandle}
                   />
                 </div>
@@ -351,6 +354,12 @@ class App extends React.Component {
         });
       })
       .catch(error => console.log("error"));
+
+    this.setState({
+      year: "",
+      author: "",
+      title: ""
+    });
   }
 
   editBookOnClick() {
@@ -381,11 +390,12 @@ class App extends React.Component {
     })
       .then(response => {
         const newBooks = response.data.map(item => {
-          if (item.checked === true) {
-            item.checked = !item.checked;
-          }
-          return item;
+          return {
+            ...item,
+            checked: false
+          };
         });
+        console.log("new books");
         console.log(newBooks);
         this.setState({
           books: newBooks
@@ -474,7 +484,7 @@ class App extends React.Component {
                 author={book.author}
                 title={book.title}
                 year={book.year}
-                checkbox={false}
+                checked={book.checked}
               />
             ))}
           </tbody>
