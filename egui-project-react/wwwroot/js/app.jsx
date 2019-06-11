@@ -220,13 +220,14 @@ class App extends React.Component {
                   type="button"
                   className="btn btn-primary"
                   data-dismiss="modal"
-                  onClick={() =>
+                  onClick={() => {
                     this.props.addBookOnClick2(
                       this.state.author,
                       this.state.title,
                       this.state.year
-                    )
-                  }
+                    );
+                    this.doClear();
+                  }}
                 >
                   Create
                 </button>
