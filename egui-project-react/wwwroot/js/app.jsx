@@ -34,7 +34,6 @@ class App extends React.Component {
     this.onCheckBoxChange = this.onCheckBoxChange.bind(this);
     this.onChangeHandle = this.onChangeHandle.bind(this);
     this.doClear = this.doClear.bind(this);
-    this.doClearFilter = this.doClearFilter.bind(this);
     this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
 
     this.state = {
@@ -58,14 +57,6 @@ class App extends React.Component {
       title: "",
       author: "",
       year: ""
-    });
-  }
-
-  doClearFilter() {
-    this.setState({
-      filterTitle: "",
-      filterAuthor: "",
-      filterYear: ""
     });
   }
 
@@ -464,7 +455,7 @@ class App extends React.Component {
               />
             </div>
           </div>
-          <div className="col-2">
+          <div className="col-4">
             <div className="form-group">
               <label htmlFor="formGroupExampleInput2">Year</label>
               <input
@@ -477,16 +468,6 @@ class App extends React.Component {
                 onChange={this.onChangeHandle}
               />
             </div>
-          </div>
-          <div className="col-2">
-            <label htmlFor="buttonClear">&nbsp;</label>
-            <button
-              className="form-control"
-              id="buttonClear"
-              onClick={this.doClearFilter}
-            >
-              Clear
-            </button>
           </div>
         </div>
       </div>
@@ -540,7 +521,6 @@ class App extends React.Component {
       </div>
     );
   }
-
   render() {
     return (
       <div className="container">
