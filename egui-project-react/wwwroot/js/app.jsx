@@ -2,7 +2,6 @@ class Book extends React.Component {
   constructor(props) {
     super(props);
   }
-
   render() {
     return (
       <tr>
@@ -29,207 +28,17 @@ class Book extends React.Component {
   }
 }
 
-class Test extends React.Component {
-  constructor() {
-    super();
-  }
-  shouldComponentUpdate(nextProps) {
-    console.log("should change");
-    console.log(nextProps.test);
-    console.log(this.props.test);
-    return true;
-  }
-  render() {
-    return (
-      <div>
-        my props
-        <h1>{this.props.test}</h1>
-      </div>
-    );
-  }
-}
-
-class BookList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      booksToView: props.elements
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { elements } = this.props;
-    const { authorFilter, titleFilter, yearFilter } = this.state;
-
-    if (elements !== nextProps.elements) {
-      this.setState({
-        booksToView: this.getbooksToView(
-          nextProps.elements,
-          authorFilter,
-          titleFilter,
-          yearFilter
-        )
-      });
-    }
-  }
-
-  getbooksToView(elements, author, title, year) {
-    //return elements.filter(el => el.includes(filterStr));
-    return elements.filter(book => {
-      return (
-        book.author.includes(author) &&
-        book.author.includes(title) &&
-        book.author.includes(year)
-      );
-    });
-  }
-
-  handleFilterChange(event) {
-    const { elements } = this.props;
-    const { name, value } = event.target;
-    this.setState({
-      [name]: value,
-      booksToView: this.getbooksToView(elements, author, title, year)
-    });
-  }
-
-  // handleFilterChange(e) {
-  //   const { elements } = this.props;
-
-  //   this.setState({
-  //     filterStr: e.target.value,
-  //     booksToView: this.getbooksToView(elements, author, title, year)
-  //   });
-  // }
-
-  filterCard() {
-    return (
-      <div className="card m-3 p-3">
-        <span className="filters">Filters:</span>
-        <div className="row">
-          <div className="col-4">
-            <div className="form-group">
-              <label htmlFor="formGroupExampleInput">Author</label>
-              <input
-                type="text"
-                className="form-control"
-                id="formGroupExampleInput"
-                placeholder="Example input"
-                name=" authorFilter"
-                value={authorFilter}
-                onChange={this.handleFilterChange}
-              />
-            </div>
-          </div>
-          <div className="col-4">
-            <div className="form-group">
-              <label htmlFor="formGroupExampleInput2">Title</label>
-              <input
-                type="text"
-                className="form-control"
-                id="formGroupExampleInput2"
-                placeholder="Another input"
-                name="titleFilter"
-                value={titleFilter}
-                onChange={this.handleFilterChange}
-              />
-            </div>
-          </div>
-          <div className="col-2">
-            <div className="form-group">
-              <label htmlFor="formGroupExampleInput2">Year</label>
-              <input
-                type="text"
-                className="form-control"
-                id="formGroupExampleInput2"
-                placeholder="Another input"
-                name="yearFilter"
-                value={yearFilter}
-                onChange={this.handleFilterChange}
-              />
-            </div>
-          </div>
-          <div className="col-2">
-            <label htmlFor="buttonClear">&nbsp;</label>
-            <button
-              className="form-control"
-              id="buttonClear"
-              onClick={this.doClearFilter}
-            >
-              Clear
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  render() {
-    const { booksToView } = this.state;
-    return (
-      <div>
-        <input
-          type="text"
-          value={filterStr}
-          onChange={this.handleFilterChange}
-        />
-        <ul>
-          {booksToView.map(e => (
-            <li key={e}>{e}</li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
-  render() {
-    return (
-      <div className="card m-3 p-3 tableStyle">
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Selected</th>
-              <th scope="col">Author</th>
-              <th scope="col">Title</th>
-              <th scope="col">Year</th>
-            </tr>
-          </thead>
-          <tbody>
-            {booksToView.map((book, index) => (
-              <Book
-                onCheckedToggle={this.onCheckBoxChange}
-                key={index}
-                id={book.id}
-                author={book.author}
-                title={book.title}
-                year={book.year}
-                checked={book.checked}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
-}
-
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.addBookOnClick = this.addBookOnClick.bind(this);
-    this.editBookOnClick = this.editBookOnClick.bind(this);
-    this.deleteBookOnClick = this.deleteBookOnClick.bind(this);
     this.onCheckBoxChange = this.onCheckBoxChange.bind(this);
     this.onChangeHandle = this.onChangeHandle.bind(this);
     this.doClear = this.doClear.bind(this);
     this.doClearFilter = this.doClearFilter.bind(this);
+    this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
 
     this.state = {
-      books: [],
-      filteredBooks: [],
-      filters: {
-        title: "",
-        author: "",
-        year: ""
-      },
+      books: props.books,
       id: "",
       title: "",
       author: "",
@@ -243,20 +52,6 @@ class App extends React.Component {
       filterYear: ""
     };
   }
-  // this.props.book.filter(book => book.checked) zwróci array t
-  componentDidMount() {
-    axios.get("/Home/List").then(response =>
-      this.setState({
-        books: response.data.books.map(book => ({
-          author: book.author,
-          title: book.title,
-          year: book.year,
-          id: book.id,
-          checked: false
-        }))
-      })
-    );
-  }
 
   doClear() {
     this.setState({
@@ -268,11 +63,9 @@ class App extends React.Component {
 
   doClearFilter() {
     this.setState({
-      filters: {
-        title: "",
-        author: "",
-        year: ""
-      }
+      filterTitle: "",
+      filterAuthor: "",
+      filterYear: ""
     });
   }
 
@@ -283,31 +76,45 @@ class App extends React.Component {
       : this.setState({
           [name]: value
         });
-    // if (name.includes("filter")) {
-    //   console.log(this.state.filterAuthor);
-    //   const filteredBook = this.state.books.filter(book => {
-    //     return (
-    //       book.author.includes(this.state.filterAuthor) &&
-    //       book.title.includes(this.state.filterTitle) &&
-    //       book.year.includes(this.state.filterYear)
-    //     );
-    //   });
-    //   console.log("filtered book");
-    //   console.log(filteredBook);
-    //   this.setState();
-    //   console.log(this.state.books);
-    // }
-  }
 
-  getbooksToView(elements, author, title, year) {
-    //return elements.filter(el => el.includes(filterStr));
-    return elements.filter(book => {
-      return (
-        book.author.includes(author) &&
-        book.author.includes(title) &&
-        book.author.includes(year)
-      );
-    });
+    if (name.includes("filterAuthor")) {
+      const filteredBook = this.props.books.filter(book => {
+        return (
+          book.author.includes(value) &&
+          book.title.includes(this.state.filterTitle) &&
+          book.year.includes(this.state.filterYear)
+        );
+      });
+      this.setState({
+        books: filteredBook
+      });
+    }
+
+    if (name.includes("filterTitle")) {
+      const filteredBook = this.props.books.filter(book => {
+        return (
+          book.author.includes(this.state.filterAuthor) &&
+          book.title.includes(value) &&
+          book.year.includes(this.state.filterYear)
+        );
+      });
+      this.setState({
+        books: filteredBook
+      });
+    }
+
+    if (name.includes("filterYear")) {
+      const filteredBook = this.props.books.filter(book => {
+        return (
+          book.author.includes(this.state.filterAuthor) &&
+          book.title.includes(this.state.filterTitle) &&
+          book.year.includes(value)
+        );
+      });
+      this.setState({
+        books: filteredBook
+      });
+    }
   }
 
   onChangeEditHandle(event) {
@@ -422,7 +229,13 @@ class App extends React.Component {
                   type="button"
                   className="btn btn-primary"
                   data-dismiss="modal"
-                  onClick={this.addBookOnClick}
+                  onClick={() =>
+                    this.props.addBookOnClick2(
+                      this.state.author,
+                      this.state.title,
+                      this.state.year
+                    )
+                  }
                 >
                   Create
                 </button>
@@ -554,7 +367,18 @@ class App extends React.Component {
                   type="button"
                   className="btn btn-primary"
                   data-dismiss="modal"
-                  onClick={this.editBookOnClick}
+                  onClick={() => {
+                    const editBook = this.state.books.filter(
+                      item => item.checked
+                    );
+                    console.log("int parsed " + editBook[0].id);
+                    this.props.editBookOnClick2(
+                      editBook[0].id,
+                      this.state.authorSelected,
+                      this.state.titleSelected,
+                      this.state.yearSelected
+                    );
+                  }}
                 >
                   Edit
                 </button>
@@ -571,7 +395,13 @@ class App extends React.Component {
       <button
         type="button"
         className="btn btn-primary m-3"
-        onClick={this.deleteBookOnClick}
+        onClick={() => {
+          const toDelete = this.state.books
+            .filter(item => item.checked)
+            .map(item => item.id);
+
+          this.props.deleteBookOnClick2(toDelete);
+        }}
       >
         Del Book
       </button>
@@ -601,87 +431,6 @@ class App extends React.Component {
     });
   }
 
-  addBookOnClick(event) {
-    axios({
-      method: "post",
-      url: "/Home/Create",
-      data: {
-        Author: this.state.author,
-        Title: this.state.title,
-        Year: this.state.year
-      }
-    })
-      .then(response => {
-        const book = {
-          ...response.data,
-          checked: false
-        };
-        this.setState({
-          books: [...this.state.books, book]
-        });
-      })
-      .catch(error => console.log("error"));
-
-    this.doClear();
-  }
-
-  editBookOnClick() {
-    const editBook = this.state.books.filter(item => item.checked);
-    console.log("int parsed " + editBook[0].id);
-    axios({
-      method: "post",
-      url: "/Home/Edit",
-      data: {
-        Id: editBook[0].id,
-        Author: this.state.authorSelected,
-        Title: this.state.titleSelected,
-        Year: this.state.yearSelected
-      }
-    })
-      .then(response => {
-        console.log("data respnse");
-        console.log(response.data);
-        const newBooks = response.data.map(item => {
-          return {
-            ...item,
-            checked: false
-          };
-        });
-        console.log("new books");
-        console.log(newBooks);
-        this.setState({
-          books: newBooks
-        });
-      })
-      .catch(error => console.log("error"));
-    this.doClear();
-  }
-
-  deleteBookOnClick() {
-    const toDelete = this.state.books
-      .filter(item => item.checked)
-      .map(item => item.id);
-
-    axios({
-      method: "post",
-      url: "/Home/Delete",
-      data: toDelete
-    })
-      .then(response => {
-        const newBooks = response.data.map(item => {
-          return {
-            ...item,
-            checked: false
-          };
-        });
-        this.setState({
-          books: newBooks
-        });
-      })
-      .catch(error => console.log("error"));
-    this.doClear();
-  }
-
   filterCard() {
     return (
       <div className="card m-3 p-3">
@@ -696,6 +445,7 @@ class App extends React.Component {
                 id="formGroupExampleInput"
                 placeholder="Example input"
                 name="filterAuthor"
+                value={this.state.filterAuthor}
                 onChange={this.onChangeHandle}
               />
             </div>
@@ -709,6 +459,7 @@ class App extends React.Component {
                 id="formGroupExampleInput2"
                 placeholder="Another input"
                 name="filterTitle"
+                value={this.state.filterTitle}
                 onChange={this.onChangeHandle}
               />
             </div>
@@ -722,6 +473,7 @@ class App extends React.Component {
                 id="formGroupExampleInput2"
                 placeholder="Another input"
                 name="filterYear"
+                value={this.state.Year}
                 onChange={this.onChangeHandle}
               />
             </div>
@@ -740,8 +492,25 @@ class App extends React.Component {
       </div>
     );
   }
-  onChangeFilter() {}
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.books !== nextProps.books) {
+      console.log("show nex props books");
+      console.log(nextProps.books);
+      console.log("show nex props books after filer");
+      const filterBooks = nextProps.books.filter(book => {
+        return (
+          book.author.includes(this.state.filterAuthor) &&
+          book.title.includes(this.state.filterTitle) &&
+          book.year.includes(this.state.filterYear)
+        );
+      });
+      console.log(filterBooks);
+      this.setState({
+        books: filterBooks
+      });
+    }
+  }
   bookListCard() {
     return (
       <div className="card m-3 p-3 tableStyle">
@@ -794,8 +563,110 @@ class App extends React.Component {
 class App2 extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      books: [],
+      filterTitle: "",
+      filterAuthor: "",
+      filterYear: ""
+    };
+    this.addBookOnClick = this.addBookOnClick.bind(this);
+    this.editBookOnClick = this.editBookOnClick.bind(this);
+    this.deleteBookOnClick = this.deleteBookOnClick.bind(this);
+  }
+  componentDidMount() {
+    axios.get("/Home/List").then(response =>
+      this.setState({
+        books: response.data.books.map(book => ({
+          author: book.author,
+          title: book.title,
+          year: book.year,
+          id: book.id,
+          checked: false
+        }))
+      })
+    );
+  }
+
+  addBookOnClick(author, title, year) {
+    axios({
+      method: "post",
+      url: "/Home/Create",
+      data: {
+        Author: author,
+        Title: title,
+        Year: year
+      }
+    })
+      .then(response => {
+        const book = {
+          ...response.data,
+          checked: false
+        };
+        this.setState({
+          books: [...this.state.books, book]
+        });
+      })
+      .catch(error => console.log("error"));
+  }
+  editBookOnClick(id, authorSelected, titleSelected, yearSelected) {
+    axios({
+      method: "post",
+      url: "/Home/Edit",
+      data: {
+        Id: id,
+        Author: authorSelected,
+        Title: titleSelected,
+        Year: yearSelected
+      }
+    })
+      .then(response => {
+        console.log("data respnse");
+        console.log(response.data);
+        const newBooks = response.data.map(item => {
+          return {
+            ...item,
+            checked: false
+          };
+        });
+        console.log("new books");
+        console.log(newBooks);
+        this.setState({
+          books: newBooks
+        });
+      })
+      .catch(error => console.log("error"));
+  }
+
+  deleteBookOnClick(toDelete) {
+    axios({
+      method: "post",
+      url: "/Home/Delete",
+      data: toDelete
+    })
+      .then(response => {
+        const newBooks = response.data.map(item => {
+          return {
+            ...item,
+            checked: false
+          };
+        });
+        this.setState({
+          books: newBooks
+        });
+      })
+      .catch(error => console.log("error"));
+  }
+
+  render() {
+    return (
+      <App
+        books={this.state.books}
+        addBookOnClick2={this.addBookOnClick}
+        editBookOnClick2={this.editBookOnClick}
+        deleteBookOnClick2={this.deleteBookOnClick}
+      />
+    );
   }
 }
 
-ReactDOM.render(<App title="Library" />, document.getElementById("container"));
+ReactDOM.render(<App2 title="Library" />, document.getElementById("container"));
