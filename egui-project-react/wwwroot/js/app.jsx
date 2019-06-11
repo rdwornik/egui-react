@@ -28,7 +28,7 @@ class Book extends React.Component {
   }
 }
 
-class App extends React.Component {
+class BookList extends React.Component {
   constructor(props) {
     super(props);
     this.onCheckBoxChange = this.onCheckBoxChange.bind(this);
@@ -221,7 +221,7 @@ class App extends React.Component {
                   className="btn btn-primary"
                   data-dismiss="modal"
                   onClick={() => {
-                    this.props.addBookOnClick2(
+                    this.props.addBookOnClick(
                       this.state.author,
                       this.state.title,
                       this.state.year
@@ -364,7 +364,7 @@ class App extends React.Component {
                       item => item.checked
                     );
                     console.log("int parsed " + editBook[0].id);
-                    this.props.editBookOnClick2(
+                    this.props.editBookOnClick(
                       editBook[0].id,
                       this.state.authorSelected,
                       this.state.titleSelected,
@@ -392,7 +392,7 @@ class App extends React.Component {
             .filter(item => item.checked)
             .map(item => item.id);
 
-          this.props.deleteBookOnClick2(toDelete);
+          this.props.deleteBookOnClick(toDelete);
         }}
       >
         Del Book
@@ -541,7 +541,7 @@ class App extends React.Component {
   }
 }
 
-class App2 extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -640,14 +640,14 @@ class App2 extends React.Component {
 
   render() {
     return (
-      <App
+      <BookList
         books={this.state.books}
-        addBookOnClick2={this.addBookOnClick}
-        editBookOnClick2={this.editBookOnClick}
-        deleteBookOnClick2={this.deleteBookOnClick}
+        addBookOnClick={this.addBookOnClick}
+        editBookOnClick={this.editBookOnClick}
+        deleteBookOnClick={this.deleteBookOnClick}
       />
     );
   }
 }
 
-ReactDOM.render(<App2 title="Library" />, document.getElementById("container"));
+ReactDOM.render(<App title="Library" />, document.getElementById("container"));
