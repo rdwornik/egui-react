@@ -35,3 +35,14 @@ egui-project-react/wwwroot/lib/bootstrap/dist/css/bootstrap.css
 egui-project-react/wwwroot/lib/jquery/LICENSE.txt
 package.json
 egui-project-react/Properties/launchSettings.json
+egui-project-react/node_modules
+egui-project-react/data
+egui-project-react/wwwroot/lib
+egui-project-react/wwwroot/cs
+egui-project-react/wwwroot/favicon.ico
+egui-project-react/*.json
+egui-project-react/Views/*.cshtml
+egui-project-react/Views/Shared
+egui-project-react/Views/Home/Privacy.cshtml
+egui-project-react/Properites
+
