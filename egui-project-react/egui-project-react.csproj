@@ -12,7 +12,7 @@
         <PackageReference Include="CsvHelper" Version="12.1.2" />
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
         <PackageReference Include="React.AspNet" Version="5.0.0-alpha4" />
         <PackageReference Include="React.Core" Version="5.0.0-alpha4" />
         <PackageReference Include="react.js" Version="0.14.7" />
